@@ -1,6 +1,6 @@
 import Connection from "./connections"
 import { SessionTable } from "./Tables/sessions"
-import { UsersTable } from "./Tables/users"
+import { ModifyTable, UsersTable } from "./Tables/users"
 
 export const onInitDB = async () => {
     try {
@@ -17,9 +17,9 @@ export const onErrorConnectingDB = () => {
 
 }
 
-const getAllTable = async ()=>{
+const getAllTable = async () => {
     const db = await Connection.getConnection()
-    const query = `SELECT name FROM sqlite_master WHERE type = 'table`
-    const res = db.getAllAsync(query)
-    console.log(res)
+    const query = `SELECT name FROM sqlite_master WHERE type = 'table';`;
+    const res = await db.getAllAsync(query);
+  
 }

@@ -1,12 +1,10 @@
 import { StyleSheet, Text, View } from 'react-native'
 import React from 'react'
+import LoginComponent from '../../Components/Auth/LoginComponent'
 
 const LoginScreen = () => {
-  return (
-    <View>
-      <Text>LoginScreen</Text>
-    </View>
-  )
+  return <LoginComponent />
+
 }
 
 export default LoginScreen
