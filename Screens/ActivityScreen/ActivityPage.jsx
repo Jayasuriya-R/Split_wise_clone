@@ -1,7 +1,9 @@
 import { StyleSheet, Text, View } from 'react-native'
-import React from 'react'
+import React, { useEffect } from 'react'
+import Connection from '../../sql/connections'
 
 const ActivityPage = () => {
+  
   return (
     <View>
       <Text>Activity</Text>

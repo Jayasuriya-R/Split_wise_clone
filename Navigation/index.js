@@ -6,20 +6,20 @@ import FriendsStackNavigator from "./friends/Stack-Navigator";
 import ActivityStackNavigator from "./activity/Stack-Navigator";
 import AccountStackNavigator from "./account/Stack-Navigator";
 import AuthStackNavigator from "./auth/Stack-Navigator";
+import { useAuth } from "../Context/AuthProvider";
 
 const Tab = createBottomTabNavigator();
 
 export default function MainNavigation() {
- const isLoggedIn = false
+ const auth = useAuth()
 
- if(!isLoggedIn){
+ if(!auth.isLoggedIn){
   return(
     <NavigationContainer>
       <AuthStackNavigator/>
     </NavigationContainer>
   )
  }
-
 
   return (
     <NavigationContainer>

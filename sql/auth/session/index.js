@@ -9,7 +9,6 @@ export const Create_session = async (userId) => {
     } catch (error) {
         console.log(error)
     }
-
 } 
 
 export const Delete_Session = async () => {
@@ -20,7 +19,6 @@ export const Delete_Session = async () => {
     } catch (error) {
         console.log(error)
     }
-
 } 
 
 
@@ -28,10 +26,8 @@ export const Get_Session = async () => {
     try {
         const db = await Connection.getConnection();
         const result = await db.getAllAsync(GetSession)
-        console.log("session",result)
         return result
     } catch (error) {
         console.log(error)
     }
-
 } 

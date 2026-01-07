@@ -1,39 +1,61 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import { isValidString } from "../constants/helper";
-import { CreateUser } from "../sql/auth/user";
-import { Create_session, Delete_Session } from "../sql/auth/session";
+import { CreateUser, GetUser } from "../sql/auth/user";
+import { Create_session, Delete_Session, Get_Session } from "../sql/auth/session";
 
-const AuthContext = createContext({ 
+const AuthContext = createContext({
     user: null,
-     isLoggedIn: false,
-      login: (id, password) => { },
-      signup : (name, password, phone) => { },
-      logout : () => { }
-     })
-export const useAuth = ()=> useContext(AuthContext)
+    isLoggedIn: false,
+    login: (id, password) => { },
+    signup: (name, email, phone, password) => { },
+    logout: () => { }
+})
+export const useAuth = () => useContext(AuthContext)
 const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null)
     const [isLoggedIn, setIsLoggedIn] = useState(false)
+    useEffect(() => {
+        checkSession()
+    }, [])
 
-    const login = (email, password) => {
+    const checkSession = async () => {
+        try {
+            const session = await Get_Session()
+            console.log("session created", session)
 
-        if(!email || !password || email.trim() ==="" || password.trim()==="") {
-            return
+            if (session?.[0]?.user_id) {
+                setIsLoggedIn(true);
+            } else {
+                setIsLoggedIn(false);
+            }
+        } catch (error) {
+            console.log(error)
         }
+    }
 
-
-     }
+    const login = async (id, password) => {
+        if (isValidString([password])) {
+            const result = await GetUser(id)
+            console.log("login", result)
+            if (!result.password === password) {
+                alert("Invalid credentials")
+            }
+            await Delete_Session()
+            await Create_session(result?.id)
+            setIsLoggedIn(true)
+        }
+    }
     const signup = async (name, email, phone, password) => {
-        if(isValidString([name, email, phone, password])) {
-        const result = await CreateUser(name,email,phone, password )
-        await Delete_Session()
-        const session = await Create_session(result?.id)
-        console.log(session)
-        console.log("session created")
-         setUser(result)
-         setIsLoggedIn(true)
+        if (isValidString([name, email, phone, password])) {
+            const result = await CreateUser(name, email, phone, password)
+            await Delete_Session()
+            const session = await Create_session(result?.id)
+            console.log(session)
+            console.log("session created")
+            setUser(result)
+            setIsLoggedIn(true)
         }
-     }
+    }
     const logout = () => { }
 
     return (

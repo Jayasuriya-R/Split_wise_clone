@@ -9,7 +9,7 @@ import FallBack from './Screens/Fallback/FallBack';
 
 export default function App() {
   return (
-    <SafeAreaProvider style={{ flex: 1 }}>
+    <SafeAreaProvider >
       <Suspense fallback={<FallBack/>}>
       <SQLiteProvider databaseName='splits.db' onInit={onInitDB} onError={onErrorConnectingDB}>
         <AuthProvider>
@@ -26,7 +26,7 @@ export default function App() {
 
 const styles = StyleSheet.create({
   container: {
-    marginTop: StatusBar.currentHeight,
+     marginTop: StatusBar.currentHeight,
     flex: 1,
   },
 });
