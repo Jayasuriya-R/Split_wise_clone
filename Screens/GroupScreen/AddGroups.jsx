@@ -1,10 +1,11 @@
 import { StyleSheet, Text, View } from 'react-native'
 import React from 'react'
+import AddNewGroup from '../../Components/group/AddNewGroup'
 
 const AddGroups = () => {
   return (
-    <View>
-      <Text>AddGroups</Text>
+    <View style={{ flex: 1 }}>
+      <AddNewGroup/>
     </View>
   )
 }
