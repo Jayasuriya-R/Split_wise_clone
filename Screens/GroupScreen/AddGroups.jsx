@@ -4,7 +4,7 @@ import AddNewGroup from '../../Components/group/AddNewGroup'
 
 const AddGroups = () => {
   return (
-    <View style={{ flex: 1 }}>
+    <View >
       <AddNewGroup/>
     </View>
   )

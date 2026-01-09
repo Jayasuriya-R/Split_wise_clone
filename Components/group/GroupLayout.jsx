@@ -32,13 +32,9 @@ const styles = StyleSheet.create({
   text: {
     fontWeight: "500",
     fontSize: 20,
-    marginTop: 10,
-    marginHorizontal: 16,
     color: "black", 
   },
   scrollContent: {
-    paddingTop: 8,
-    paddingHorizontal: 16,
-    paddingBottom: 20,
+    
   },
 });
