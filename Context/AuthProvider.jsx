@@ -43,6 +43,8 @@ const AuthProvider = ({ children }) => {
             await Delete_Session()
             await Create_session(result?.id)
             setIsLoggedIn(true)
+            console.log("result",result)
+            setUser(result)
         }
     }
     const signup = async (name, email, phone, password) => {

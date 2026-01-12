@@ -3,15 +3,35 @@ import { Appbar, Chip, TextInput } from 'react-native-paper'
 import { useNavigation } from '@react-navigation/native'
 import { useState } from 'react'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
+import { useAuth } from '../../Context/AuthProvider'
+import { createNewGroup } from '../../sql/group/create'
 
 const AddGroups = () => {
   const navigation = useNavigation()
   const [groupName, setGroupName] = useState("")
   const [groups, setGroups] = useState([])
+ const { user } = useAuth();
 
-  const addNewGroup = () => {
-    setGroups((prev) => [...prev, groupName])
+const addNewGroup = async () => {
+  if (!groupName || groupName.trim() === "") {
+    alert("Please enter a group name");
+    return;
   }
+ console.log("user:",user)
+  if (!user?.id) {
+    alert("User not logged in");
+    return;
+  }
+
+  try {
+    const groupId = await createNewGroup(groupName, Number(user.id));
+    alert(`Group created successfully! \nGroup ID: ${groupId}`);
+  } catch (error) {
+    console.error("Error occurred while creating group:", error);
+    alert("Failed to create group. Please try again.");
+  }
+};
+
   return (
     <SafeAreaProvider>
       <View style={styles.container}>
