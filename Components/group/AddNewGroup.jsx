@@ -35,7 +35,6 @@ const addNewGroup = async () => {
   return (
     <SafeAreaProvider>
       <View style={styles.container}>
-        {/* Appbar */}
         <Appbar.Header statusBarHeight={0} elevated>
           <Appbar.Action icon="close" onPress={() => navigation.goBack()} />
           <Appbar.Content title="Add Group" />

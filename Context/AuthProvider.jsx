@@ -24,6 +24,9 @@ const AuthProvider = ({ children }) => {
             console.log("session created", session)
 
             if (session?.[0]?.user_id) {
+                const userId = session?.[0]?.user_id
+                const curUser = await GetUser(userId)
+                setUser(curUser)
                 setIsLoggedIn(true);
             } else {
                 setIsLoggedIn(false);
@@ -43,7 +46,7 @@ const AuthProvider = ({ children }) => {
             await Delete_Session()
             await Create_session(result?.id)
             setIsLoggedIn(true)
-            console.log("result",result)
+            console.log("result", result)
             setUser(result)
         }
     }
