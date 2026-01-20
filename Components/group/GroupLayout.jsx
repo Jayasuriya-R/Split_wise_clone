@@ -11,9 +11,9 @@ const GroupLayout = ({ children }) => {
 
         <Text style={styles.text}>All Groups</Text>
 
-        <ScrollView contentContainerStyle={styles.scrollContent}>
+        <View style={{ flex: 1 }}>
           {children}
-        </ScrollView>
+        </View>
       </View>
     </SafeAreaProvider>
   );
@@ -32,9 +32,9 @@ const styles = StyleSheet.create({
   text: {
     fontWeight: "500",
     fontSize: 20,
-    color: "black", 
+    color: "black",
   },
   scrollContent: {
-    
+    flex: 1,
   },
 });
