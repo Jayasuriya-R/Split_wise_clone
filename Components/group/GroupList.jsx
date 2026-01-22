@@ -22,7 +22,7 @@ const GroupList = () => {
 
   return (
     <View style={{ flex: 1 }}>
-      <Text>GroupList</Text>
+      
 
       <FlatList style={styles.list}
         data={groupOfUsers}

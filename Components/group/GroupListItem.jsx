@@ -1,14 +1,26 @@
 import { Dimensions, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React from 'react'
+import { Chip, Icon, IconButton } from 'react-native-paper'
+import { useNavigation } from '@react-navigation/native'
+
 
 const GroupListItem = ({groups}) => {
+    const nav = useNavigation()
+
+    const navigateToGroupItem = ()=>{
+     nav.navigate('GroupItem',{groups})
+    }
   return (
-    <TouchableOpacity style={styles.conatiner}>
-        <View style={styles.itemContainer}>
+    <TouchableOpacity style={styles.conatiner} onPress={navigateToGroupItem}>
+    <View style={styles.itemContainer}>
+        <View >
          <Text style={styles.text}>{groups.group_name}</Text>
          <Text style={styles.subText}>{ new Date(groups.created_at).toLocaleDateString()}</Text>
         </View>
-      
+        <View style={styles.iconContainer}>
+         <Chip style={{ backgroundColor: 'white' }} icon="account">4</Chip>
+        </View>
+      </View>
     </TouchableOpacity>
   )
 }
@@ -32,10 +44,15 @@ const styles = StyleSheet.create({
     },
     itemContainer:{
         height:100,
-        maxHeight:100
+        maxHeight:100,
+        flexDirection:'row',
+        justifyContent:'space-between'
     },
     subText:{
         color:'white',
 
+    },
+    iconContainer:{
+        padding:3
     }
 })

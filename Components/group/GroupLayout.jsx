@@ -33,6 +33,7 @@ const styles = StyleSheet.create({
     fontWeight: "500",
     fontSize: 20,
     color: "black",
+    textAlign:'center'
   },
   scrollContent: {
     flex: 1,
