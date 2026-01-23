@@ -1,10 +1,12 @@
 import { StyleSheet, Text, View } from 'react-native'
 import React from 'react'
+import { useRoute } from '@react-navigation/native'
 
 const GroupItem = () => {
+  const { params: { groups } } = useRoute()
   return (
     <View>
-      <Text>GroupItem</Text>
+      <Text>{groups.group_name}</Text>
     </View>
   )
 }
