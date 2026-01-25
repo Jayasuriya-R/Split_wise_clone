@@ -2,12 +2,14 @@ import { Dimensions, StyleSheet, Text, TouchableOpacity, View } from 'react-nati
 import React from 'react'
 import { Chip, Icon, IconButton } from 'react-native-paper'
 import { useNavigation } from '@react-navigation/native'
+import { useAppState } from '../../Context/AppStateProvider'
 
 
 const GroupListItem = ({groups}) => {
     const nav = useNavigation()
-
+    const {setSelectedGroup} = useAppState()
     const navigateToGroupItem = ()=>{
+       setSelectedGroup(groups.id) 
      nav.navigate('GroupItem',{groups})
     }
   return (
