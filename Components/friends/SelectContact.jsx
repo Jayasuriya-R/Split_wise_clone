@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react'
 import * as Contacts from 'expo-contacts'
 import MultiSelect from 'react-native-multiple-select'
 
-const SelectContact = () => {
+const SelectContact = ({onSelectedContacts}) => {
     const [contacts, setContacts] = useState([])
     const [selectedContacts, setSelectedContacts] = useState([])
     useEffect(()=>{
@@ -13,6 +13,7 @@ const SelectContact = () => {
 
     const onItemChange = (data)=>{
       setSelectedContacts(data)
+      onSelectedContacts(data)
     }
     const getContactPermission = async ()=>{
       const permission = await Contacts.getPermissionsAsync();
@@ -44,7 +45,7 @@ const SelectContact = () => {
     
   return (
     <View>
-      <Text>SelectContact</Text>
+      <Text style={{marginVertical:10, fontWeight:'500'}}>SelectContact</Text>
       <MultiSelect uniqueKey='id' items={contacts}
       onSelectedItemsChange={onItemChange}
       selectedItems={selectedContacts}
