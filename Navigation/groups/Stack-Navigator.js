@@ -7,26 +7,46 @@ import { createMaterialTopTabNavigator } from "@react-navigation/material-top-ta
 import GroupItemPersons from "../../Screens/GroupScreen/GroupItemPersons";
 import GroupItemMain from "../../Screens/GroupScreen/GroupItemMain";
 import AddGroupMembers from "../../Screens/GroupScreen/AddGroupMembers";
+import { Appbar } from "react-native-paper";
+import { useNavigation } from "@react-navigation/native";
+import { View } from "react-native";
 
 const Stack = createNativeStackNavigator();
 const Tab = createMaterialTopTabNavigator();
 
-const GroupItemNavigator = () =>{
-    return(
+const GroupItemNavigator = ({ navigation }) => {
+  return (
+    <View style={{ flex: 1 }}>
+      <Appbar.Header statusBarHeight={0}>
+        <Appbar.BackAction onPress={() => navigation.goBack()} />
+        <Appbar.Content title="Group Details" />
+      </Appbar.Header>
+
+      <View style={{ flex: 1 }}>
         <Tab.Navigator>
-            <Tab.Screen options={{title:"SPLITS"}} name="GroupItemMain" component={GroupItemMain}/>
-            <Tab.Screen options={{title:"MEMBERS"}} name="GroupItemPersons" component={GroupItemPersons}/>
+          <Tab.Screen
+            name="GroupItemMain"
+            component={GroupItemMain}
+            options={{ title: "SPLITS" }}
+          />
+          <Tab.Screen
+            name="GroupItemPersons"
+            component={GroupItemPersons}
+            options={{ title: "MEMBERS" }}
+          />
         </Tab.Navigator>
-    )
-}
- 
-const GroupStackNavigator = () =>{
-    return(
-        <Stack.Navigator screenOptions={{headerShown:false}}>
+      </View>
+    </View>
+  );
+};
+
+export const GroupStackNavigator = () => {
+    return (
+        <Stack.Navigator screenOptions={{ headerShown: false }}>
             <Stack.Screen name="AllGroups" component={AllGroups} />
-            <Stack.Screen name="AddGroup"  component={AddGroups}/>
-            <Stack.Screen  name="GroupItem" component={GroupItemNavigator}/>
-            <Stack.Screen  name="AddGroupMembers" component={AddGroupMembers}/>
+            <Stack.Screen name="AddGroup" component={AddGroups} />
+            <Stack.Screen name="GroupItem" component={GroupItemNavigator} />
+            <Stack.Screen  name="AddGroupMembers" component={AddGroupMembers} />
         </Stack.Navigator>
     )
 }

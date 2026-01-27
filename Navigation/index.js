@@ -1,7 +1,7 @@
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { FontAwesome } from "@expo/vector-icons";
-import GroupStackNavigator from "../Navigation/groups/Stack-Navigator";
+import {GroupStackNavigator} from "../Navigation/groups/Stack-Navigator";
 import FriendsStackNavigator from "./friends/Stack-Navigator";
 import ActivityStackNavigator from "./activity/Stack-Navigator";
 import AccountStackNavigator from "./account/Stack-Navigator";

@@ -9,6 +9,7 @@ const GroupItemPersons = () => {
   const [members, setMembers] = useState([])
   const nav = useNavigation()
   const {selectedGroup} = useAppState()
+  
   const handleAddNewMembers = ()=>{
   nav.navigate("AddGroupMembers")
   }
