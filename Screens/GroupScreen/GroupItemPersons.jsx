@@ -14,7 +14,7 @@ const GroupItemPersons = () => {
   nav.navigate("AddGroupMembers")
   }
 useLayoutEffect(()=>{
-   GET_MEMBERS_OF_GROUP(selectedGroup).then(setMembers).catch((err)=>console.log)
+   GET_MEMBERS_OF_GROUP(selectedGroup.id).then(setMembers).catch((err)=>console.log)
 },[])
   return (
     <View>

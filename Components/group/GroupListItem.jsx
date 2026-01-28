@@ -9,7 +9,7 @@ const GroupListItem = ({groups}) => {
     const nav = useNavigation()
     const {setSelectedGroup} = useAppState()
     const navigateToGroupItem = ()=>{
-       setSelectedGroup(groups.id) 
+       setSelectedGroup(groups) 
      nav.navigate('GroupItem',{groups})
     }
   return (
