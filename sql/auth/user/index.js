@@ -1,10 +1,10 @@
 import Connection from "../../connections"
 import { GET_USER, InsertUser } from "./queries";
 
-export const CreateUser = async (name, email, phone, password) => {
+export const CreateUser = async (name, email, phone, password, isRegistered = 1) => {
     try {
         const db = await Connection.getConnection();
-        const createdUser = await db.runAsync(InsertUser, [name, email, phone, password])
+        const createdUser = await db.runAsync(InsertUser, [name, email, phone, password, isRegistered])
         return await GetUser(createdUser?.lastInsertRowId)
     } catch (error) {
         console.log(error)
