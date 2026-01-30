@@ -35,9 +35,10 @@ const getContactDetailsById = async (id) => {
     }
 }
 
-const registerUsersUnOfficial = async (contactIds) => {
-    for (const contact of contactIds) {
-        const contact = await getContactDetailsById(id)
+export const registerUsersUnOfficial = async (contactIds) => {
+    let userIds = []
+    for (const contactId of contactIds) {
+        const contact = await getContactDetailsById(contactId)
         if(!contact) return
 
         let user = await isUserAlreadyExistsInDB(contact.phone)
@@ -46,7 +47,10 @@ const registerUsersUnOfficial = async (contactIds) => {
             console.log("User aldready exists")
         }else{
          user = await CreateUser(contact.name,"",contact.phone,contact.phone,0)
+         console.log("users",user.id)
         }
-    }
 
+    userIds.push(user.id)
+    }
+return userIds
 }
