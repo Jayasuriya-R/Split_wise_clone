@@ -6,8 +6,9 @@ import { CreateUser } from '.';
 
 
 const isUserAlreadyExistsInDB = async (phone) => {
+     const db = await Connection.getConnection();
     try {
-        const db = await Connection.getConnection();
+       
         const result = await db.getFirstAsync(GET_USER_Phone, phone)
         return result
     } catch (error) {
@@ -28,7 +29,7 @@ const getContactDetailsById = async (id) => {
         }
         return {
             name: contacts.name,
-            phone: getFormatedPhoneNumber(contacts.phoneNumbers[0])
+            phone: getFormatedPhoneNumber(contacts.phoneNumbers[0].number)
         }
     } catch (error) {
         console.log("error occured", error)
