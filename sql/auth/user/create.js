@@ -47,7 +47,7 @@ export const registerUsersUnOfficial = async (contactIds) => {
         if(user){
             console.log("User aldready exists")
         }else{
-         user = await CreateUser(contact.name,"",contact.phone,contact.phone,0)
+         user = await CreateUser(contact.name,null,contact.phone,contact.phone,0)
          console.log("users",user.id)
         }
 
