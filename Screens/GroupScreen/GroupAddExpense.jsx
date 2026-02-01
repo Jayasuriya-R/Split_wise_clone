@@ -1,6 +1,6 @@
-import { StyleSheet, Text, View } from 'react-native'
+import { Dimensions, StyleSheet, Text, View } from 'react-native'
 import React, { useActionState, useLayoutEffect, useState } from 'react'
-import { Appbar, Chip, PaperProvider } from 'react-native-paper'
+import { Appbar, Button, Chip, PaperProvider, TextInput } from 'react-native-paper'
 import { useNavigation } from '@react-navigation/native'
 import SplitByPercentage from '../../Components/expense/SplitByPercentage'
 import { GET_MEMBERS_OF_GROUP } from '../../sql/group-member/get'
@@ -12,6 +12,9 @@ const GroupAddExpense = () => {
     const [splitType, setSplitType] = useState(SplitType.equally)
     const [modalVisible, setModalVisible] = useState(false)
     const [users, setUsers] = useState([])
+    const [expenseDesc, setExpenseDesc] = useState('')
+    const [expenseAmt, setExpenseAmt] = useState('')
+    const [expenseData , setExpenseData] = useState(null)
     const groupId = useAppState().selectedGroup?.id
 
     useLayoutEffect(() => { GET_MEMBERS_OF_GROUP(groupId).then(setUsers).catch(err => console.log(err)) }, [])
@@ -19,6 +22,15 @@ const GroupAddExpense = () => {
         setSplitType(SplitType.percentage)
         setModalVisible(true)
     }
+    const closeModal = (data)=>{
+        setExpenseData(data)
+        setModalVisible(false)
+    }
+    const handleCreateSplit=()=>{
+     console.log("expense Data",expenseData)
+     users?.map((u)=> console.log(u.name))
+    }
+    
     return (
         <PaperProvider>
             <View>
@@ -30,7 +42,33 @@ const GroupAddExpense = () => {
                     <Chip icon={splitType === 'equally' ? "check" : ''} onPress={() => setSplitType(SplitType.equally)}>Equally</Chip>
                     <Chip icon={splitType === 'percentage' ? "check" : ''} onPress={splitByPercentage}>Percentage</Chip>
                 </View>
-                <SplitByPercentage visible={modalVisible} close={() => setModalVisible(false)} users={users} />
+                <SplitByPercentage visible={modalVisible} close={closeModal} users={users} />
+                <View style={styles.inputBox}>
+                <View style={{alignItems:'center'}} >
+                    <TextInput
+                        mode="outlined"
+                        value={expenseDesc}
+                        left={<TextInput.Icon icon="receipt" />}
+                        style={styles.input}
+                        placeholder='Receipt'
+                        onChangeText={(text)=> setExpenseDesc(text)}
+                    />
+                </View>
+                <View style={{alignItems:'center'}}>
+                    <TextInput
+                        mode="outlined"
+                        value={expenseAmt}
+                        left={<TextInput.Icon icon="currency-rupee" />}
+                        style={styles.input}
+                        keyboardType='number-pad'
+                        placeholder='Rupees'
+                        onChangeText={(text) => setExpenseAmt(text)}
+                    />
+                </View>
+                <View style={{alignItems:'center'}}>
+                <Button onPress={handleCreateSplit} mode='contained-tonal'>Create Split</Button>
+                </View>
+                </View>
             </View>
         </PaperProvider>
     )
@@ -42,7 +80,15 @@ const styles = StyleSheet.create({
     selectionContainer: {
         flexDirection: 'row',
         justifyContent: 'center',
-        marginVertical: 10,
+        marginVertical: 15,
         gap: 10
+    },
+    inputBox:{
+        justifyContent:'center',
+        gap:20,
+        marginTop:20
+    },
+    input:{
+   width:350
     }
 })
