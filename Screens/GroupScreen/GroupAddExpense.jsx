@@ -5,6 +5,7 @@ import { useNavigation } from '@react-navigation/native'
 import SplitByPercentage from '../../Components/expense/SplitByPercentage'
 import { GET_MEMBERS_OF_GROUP } from '../../sql/group-member/get'
 import { useAppState } from '../../Context/AppStateProvider'
+import ExpenseDetails from '../../Components/expense/ExpenseDetails'
 
 const GroupAddExpense = () => {
     const nav = useNavigation()
@@ -14,7 +15,7 @@ const GroupAddExpense = () => {
     const [users, setUsers] = useState([])
     const [expenseDesc, setExpenseDesc] = useState('')
     const [expenseAmt, setExpenseAmt] = useState('')
-    const [expenseData , setExpenseData] = useState(null)
+    const [expenseData, setExpenseData] = useState(null)
     const groupId = useAppState().selectedGroup?.id
 
     useLayoutEffect(() => { GET_MEMBERS_OF_GROUP(groupId).then(setUsers).catch(err => console.log(err)) }, [])
@@ -22,15 +23,22 @@ const GroupAddExpense = () => {
         setSplitType(SplitType.percentage)
         setModalVisible(true)
     }
-    const closeModal = (data)=>{
+    const closeModal = (data) => {
         setExpenseData(data)
         setModalVisible(false)
     }
-    const handleCreateSplit=()=>{
-     console.log("expense Data",expenseData)
-     users?.map((u)=> console.log(u.name))
+    const handleCreateSplit = () => {
+        console.log("expense Data", expenseData)
+        users?.map((u) => console.log(u.name))
     }
-    
+    const splitEqually = () => {
+        setSplitType(SplitType.equally)
+        const equalShare = 100 / users.length
+        const expData = {}
+        users?.forEach((user) => expData[user.id] = equalShare)
+        setExpenseData(expData)
+    }
+
     return (
         <PaperProvider>
             <View>
@@ -39,35 +47,36 @@ const GroupAddExpense = () => {
                     <Appbar.Content title="GroupAddExpense" />
                 </Appbar.Header>
                 <View style={styles.selectionContainer}>
-                    <Chip icon={splitType === 'equally' ? "check" : ''} onPress={() => setSplitType(SplitType.equally)}>Equally</Chip>
+                    <Chip icon={splitType === 'equally' ? "check" : ''} onPress={splitEqually}>Equally</Chip>
                     <Chip icon={splitType === 'percentage' ? "check" : ''} onPress={splitByPercentage}>Percentage</Chip>
                 </View>
                 <SplitByPercentage visible={modalVisible} close={closeModal} users={users} />
                 <View style={styles.inputBox}>
-                <View style={{alignItems:'center'}} >
-                    <TextInput
-                        mode="outlined"
-                        value={expenseDesc}
-                        left={<TextInput.Icon icon="receipt" />}
-                        style={styles.input}
-                        placeholder='Receipt'
-                        onChangeText={(text)=> setExpenseDesc(text)}
-                    />
-                </View>
-                <View style={{alignItems:'center'}}>
-                    <TextInput
-                        mode="outlined"
-                        value={expenseAmt}
-                        left={<TextInput.Icon icon="currency-rupee" />}
-                        style={styles.input}
-                        keyboardType='number-pad'
-                        placeholder='Rupees'
-                        onChangeText={(text) => setExpenseAmt(text)}
-                    />
-                </View>
-                <View style={{alignItems:'center'}}>
-                <Button onPress={handleCreateSplit} mode='contained-tonal'>Create Split</Button>
-                </View>
+                    <View style={{ alignItems: 'center' }} >
+                        <TextInput
+                            mode="outlined"
+                            value={expenseDesc}
+                            left={<TextInput.Icon icon="receipt" />}
+                            style={styles.input}
+                            placeholder='Receipt'
+                            onChangeText={(text) => setExpenseDesc(text)}
+                        />
+                    </View>
+                    <View style={{ alignItems: 'center' }}>
+                        <TextInput
+                            mode="outlined"
+                            value={expenseAmt}
+                            left={<TextInput.Icon icon="currency-rupee" />}
+                            style={styles.input}
+                            keyboardType='number-pad'
+                            placeholder='Rupees'
+                            onChangeText={(text) => setExpenseAmt(text)}
+                        />
+                    </View>
+                    <View style={{ alignItems: 'center' }}>
+                        <Button onPress={handleCreateSplit} mode='contained-tonal'>Create Split</Button>
+                    </View>
+                    {expenseData && users && <ExpenseDetails expenseData={expenseData} users={users} expenseAmt={expenseAmt} />}
                 </View>
             </View>
         </PaperProvider>
@@ -83,12 +92,12 @@ const styles = StyleSheet.create({
         marginVertical: 15,
         gap: 10
     },
-    inputBox:{
-        justifyContent:'center',
-        gap:20,
-        marginTop:20
+    inputBox: {
+        justifyContent: 'center',
+        gap: 20,
+        marginTop: 20
     },
-    input:{
-   width:350
+    input: {
+        width: 350
     }
 })
