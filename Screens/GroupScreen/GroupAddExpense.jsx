@@ -6,6 +6,8 @@ import SplitByPercentage from '../../Components/expense/SplitByPercentage'
 import { GET_MEMBERS_OF_GROUP } from '../../sql/group-member/get'
 import { useAppState } from '../../Context/AppStateProvider'
 import ExpenseDetails from '../../Components/expense/ExpenseDetails'
+import { addNewExpense } from '../../sql/expense/add'
+import { useAuth } from '../../Context/AuthProvider'
 
 const GroupAddExpense = () => {
     const nav = useNavigation()
@@ -17,6 +19,7 @@ const GroupAddExpense = () => {
     const [expenseAmt, setExpenseAmt] = useState('')
     const [expenseData, setExpenseData] = useState(null)
     const groupId = useAppState().selectedGroup?.id
+    const {user} = useAuth()
 
     useLayoutEffect(() => { GET_MEMBERS_OF_GROUP(groupId).then(setUsers).catch(err => console.log(err)) }, [])
     const splitByPercentage = () => {
@@ -27,9 +30,13 @@ const GroupAddExpense = () => {
         setExpenseData(data)
         setModalVisible(false)
     }
-    const handleCreateSplit = () => {
-        console.log("expense Data", expenseData)
-        users?.map((u) => console.log(u.name))
+    const handleCreateSplit = async() => {
+       try {
+        await addNewExpense(expenseData,+expenseAmt,expenseDesc,user?.id,+groupId)
+        alert("Success")
+       } catch (error) {
+        console.log("Failed")
+       }
     }
     const splitEqually = () => {
         setSplitType(SplitType.equally)

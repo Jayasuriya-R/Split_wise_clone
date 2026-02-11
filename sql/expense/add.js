@@ -1,4 +1,7 @@
+import { PaymentStatus } from "../../utils/helper";
+import { addNewActivity } from "../activity/add";
 import Connection from "../connections";
+import { addNewPaymentRecord } from "../payment/add";
 import { CREATE_NEW_EXPENSE_QUERY, CREATE_NEW_EXPENSE_SPLITS_QUERY } from "./queries"
 
 export const addNewExpense = async (expenseData, users, amount, description, loggedInUserId, groupId) => {
@@ -9,12 +12,22 @@ export const addNewExpense = async (expenseData, users, amount, description, log
 
         const expense = await addExpenseRecord(db, description, amount, loggedInUserId, groupId)
         console.log("Expense Record created", expense)
+
+        
+        const activityTextMainuser = `Added New Expense in Group Id ${groupId} with payment of ${amount}`
+        await addNewActivity(db,activityTextMainuser,loggedInUserId);
+
         const userIds = Object.keys(expenseData).filter((uid) => +uid !== loggedInUserId)
         for (const userId of userIds) {
             const shareAmount = amount * (expenseData[userId] / 100)
             const expenseSplitRecord = await addExpenseSplitRecord(db, expense, +userId, shareAmount);
             console.log("Split Record Successfully created")
+            const activityText = `You were added in expense ${expense} and you need to pay ${shareAmount} to userId ${userId}`
+            await addNewActivity(db,activityText,+userId)
+            const  payment = await addNewPaymentRecord(db,+userId,+loggedInUserId,shareAmount,expense,PaymentStatus.PENDING)
+            console.log("Payment record created")
         }
+
         console.log("splits created successfully")
 
         db.execAsync("COMMIT")

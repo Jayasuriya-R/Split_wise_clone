@@ -14,3 +14,7 @@ export const getFormatedPhoneNumber =  (val) => {
  }
  return num
 }
+
+export const generateActivity = (userId)=>{
+
+}
