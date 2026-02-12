@@ -61,7 +61,16 @@ const AuthProvider = ({ children }) => {
             setIsLoggedIn(true)
         }
     }
-    const logout = () => { }
+    const logout = async () => {
+        try {
+        await Delete_Session();
+        setUser(null)
+        setIsLoggedIn(false)
+        } catch (error) {
+         console.log("Error while log out",error)
+         return
+        }
+    }
 
     return (
         <AuthContext.Provider value={{ user, isLoggedIn, login, logout, signup }}>
