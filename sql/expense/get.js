@@ -3,8 +3,8 @@ import { GET_EXPENSE_OF_A_GROUP } from "./queries";
 
 export const getExpensesOfGroup = async (groupId) => {
     try {
-        const db = await Connection.getConnection(GET_EXPENSE_OF_A_GROUP, [groupId]);
-        const result = await db.getAllAsync()
+        const db = await Connection.getConnection();
+        const result = await db.getAllAsync(GET_EXPENSE_OF_A_GROUP, [groupId])
         console.log("Expenses", result)
         return result
     } catch (error) {
