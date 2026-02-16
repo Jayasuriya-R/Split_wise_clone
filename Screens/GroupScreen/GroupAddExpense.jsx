@@ -32,6 +32,7 @@ const GroupAddExpense = () => {
     }
     const handleCreateSplit = async() => {
        try {
+        console.log("groupId :;",groupId)
         await addNewExpense(expenseData,+expenseAmt,expenseDesc,user?.id,+groupId)
         alert("Success")
        } catch (error) {

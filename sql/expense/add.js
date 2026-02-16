@@ -9,7 +9,7 @@ export const addNewExpense = async (expenseData, users, amount, description, log
         const db = await Connection.getConnection();
         db.execAsync("BEGIN")
         console.log("Transaction started")
-
+        console.log("group id ::", groupId)
         const expense = await addExpenseRecord(db, description, amount, loggedInUserId, groupId)
         console.log("Expense Record created", expense)
 
