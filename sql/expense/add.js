@@ -2,62 +2,179 @@ import { PaymentStatus } from "../../utils/helper";
 import { addNewActivity } from "../activity/add";
 import Connection from "../connections";
 import { addNewPaymentRecord } from "../payment/add";
-import { CREATE_NEW_EXPENSE_QUERY, CREATE_NEW_EXPENSE_SPLITS_QUERY } from "./queries"
+import {
+  CREATE_NEW_EXPENSE_QUERY,
+  CREATE_NEW_EXPENSE_SPLITS_QUERY,
+} from "./queries";
 
-export const addNewExpense = async (expenseData, users, amount, description, loggedInUserId, groupId) => {
-    try {
-        const db = await Connection.getConnection();
-        db.execAsync("BEGIN")
-        console.log("Transaction started")
-        console.log("group id ::", groupId)
-        const expense = await addExpenseRecord(db, description, amount, loggedInUserId, groupId)
-        console.log("Expense Record created", expense)
+/**
+ * MAIN EXPENSE CREATION
+ */
+export const addNewExpense = async (
+  expenseData,
+  amount,
+  description,
+  loggedInUserId,
+  groupId
+) => {
+  let db;
 
-        
-        const activityTextMainuser = `Added New Expense in Group Id ${groupId} with payment of ${amount}`
-        await addNewActivity(db,activityTextMainuser,loggedInUserId);
+  try {
+    // -----------------------------
+    // Validation
+    // -----------------------------
+    if (!groupId) throw new Error("Invalid groupId");
+    if (!amount || amount <= 0) throw new Error("Invalid amount");
 
-        const userIds = Object.keys(expenseData).filter((uid) => +uid !== loggedInUserId)
-        for (const userId of userIds) {
-            const shareAmount = amount * (expenseData[userId] / 100)
-            const expenseSplitRecord = await addExpenseSplitRecord(db, expense, +userId, shareAmount);
-            console.log("Split Record Successfully created")
-            const activityText = `You were added in expense ${expense} and you need to pay ${shareAmount} to userId ${userId}`
-            await addNewActivity(db,activityText,+userId)
-            const  payment = await addNewPaymentRecord(db,+userId,+loggedInUserId,shareAmount,expense,PaymentStatus.PENDING)
-            console.log("Payment record created")
-        }
+    const totalPercentage = Object.values(expenseData).reduce(
+      (sum, val) => sum + Number(val),
+      0
+    );
 
-        console.log("splits created successfully")
-
-        db.execAsync("COMMIT")
-        console.log("Transaction complete")
-    } catch (error) {
-        db.execAsync("ROLLBACK")
-        console.log("Transaction failed")
+    if (Math.round(totalPercentage) !== 100) {
+      throw new Error("Split percentage must equal 100%");
     }
-}
 
-export const addExpenseRecord = async (db, description, amount, paidBy, groupId) => {
-    try {
-        const newExpense = await db.runAsync(CREATE_NEW_EXPENSE_QUERY, [
-            description, amount, paidBy, groupId, 0
-        ]);
-        console.log("expense recoors", newExpense)
-        return newExpense.lastInsertRowId
-    } catch (error) {
-        console.log("Error occured", error)
-    }
-}
+    // -----------------------------
+    // DB Transaction Start
+    // -----------------------------
+    db = await Connection.getConnection();
 
-export const addExpenseSplitRecord = async (db, expenseId, userId, amountOwed) => {
-    try {
-        const newExpense = await db.runAsync(CREATE_NEW_EXPENSE_SPLITS_QUERY, [
-            expenseId, userId, amountOwed
-        ]);
-        console.log("expense recoors", newExpense)
-        return newExpense.lastInsertRowId
-    } catch (error) {
-        console.log("Error occured", error)
+    await db.execAsync("BEGIN");
+    console.log("✅ Transaction started");
+
+    // -----------------------------
+    // Create expense record
+    // -----------------------------
+    const expenseId = await addExpenseRecord(
+      db,
+      description,
+      amount,
+      loggedInUserId,
+      groupId
+    );
+
+    console.log("✅ Expense created:", expenseId);
+
+    // -----------------------------
+    // Activity — main user
+    // -----------------------------
+    const activityTextMainUser = `Added expense ₹${amount} in group ${groupId}`;
+
+    await addNewActivity(
+      db,
+      activityTextMainUser,
+      loggedInUserId
+    );
+
+    // -----------------------------
+    // Split handling
+    // -----------------------------
+    const userIds = Object.keys(expenseData).filter(
+      (uid) => +uid !== loggedInUserId
+    );
+
+    for (const userId of userIds) {
+      const percentage = expenseData[userId];
+
+      // safe currency math
+      const shareAmount =
+        Math.round(amount * (percentage / 100) * 100) / 100;
+
+      // split record
+      await addExpenseSplitRecord(
+        db,
+        expenseId,
+        +userId,
+        shareAmount
+      );
+
+      // activity
+      const activityText =
+        `Expense #${expenseId}: you owe ₹${shareAmount}`;
+
+      await addNewActivity(db, activityText, +userId);
+
+      // payment record
+      await addNewPaymentRecord(
+        db,
+        +userId,
+        +loggedInUserId,
+        shareAmount,
+        expenseId,
+        PaymentStatus.PENDING
+      );
+
+      console.log(
+        `✅ Split + payment created for user ${userId}`
+      );
     }
-}
+
+    // -----------------------------
+    // Commit transaction
+    // -----------------------------
+    await db.execAsync("COMMIT");
+
+    console.log("🎉 Transaction committed");
+
+    return expenseId;
+  } catch (error) {
+    console.error("❌ Transaction failed:", error);
+
+    if (db) {
+      try {
+        await db.execAsync("ROLLBACK");
+        console.log("↩ Transaction rolled back");
+      } catch (rollbackError) {
+        console.error("Rollback failed:", rollbackError);
+      }
+    }
+
+    throw error;
+  }
+};
+
+/**
+ * INSERT EXPENSE RECORD
+ */
+export const addExpenseRecord = async (
+  db,
+  description,
+  amount,
+  paidBy,
+  groupId
+) => {
+  try {
+    const result = await db.runAsync(
+      CREATE_NEW_EXPENSE_QUERY,
+      [description, amount, paidBy, groupId, 0]
+    );
+
+    return result.lastInsertRowId;
+  } catch (error) {
+    console.error("Expense insert failed:", error);
+    throw error;
+  }
+};
+
+/**
+ * INSERT SPLIT RECORD
+ */
+export const addExpenseSplitRecord = async (
+  db,
+  expenseId,
+  userId,
+  amountOwed
+) => {
+  try {
+    const result = await db.runAsync(
+      CREATE_NEW_EXPENSE_SPLITS_QUERY,
+      [expenseId, userId, amountOwed]
+    );
+
+    return result.lastInsertRowId;
+  } catch (error) {
+    console.error("Split insert failed:", error);
+    throw error;
+  }
+};
