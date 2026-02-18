@@ -11,6 +11,7 @@ import { Appbar } from "react-native-paper";
 import { useNavigation } from "@react-navigation/native";
 import { View } from "react-native";
 import GroupAddExpense from "../../Screens/GroupScreen/GroupAddExpense";
+import GroupExpenseItem from "../../Screens/GroupScreen/GroupExpenseItem";
 
 const Stack = createNativeStackNavigator();
 const Tab = createMaterialTopTabNavigator();
@@ -49,6 +50,7 @@ export const GroupStackNavigator = () => {
             <Stack.Screen name="GroupItem" component={GroupItemNavigator} />
             <Stack.Screen  name="AddGroupMembers" component={AddGroupMembers} />
             <Stack.Screen  name="GroupAddExpense" component={GroupAddExpense} />
+            <Stack.Screen  name="GroupExpenseItem" component={GroupExpenseItem} />
         </Stack.Navigator>
     )
 }
