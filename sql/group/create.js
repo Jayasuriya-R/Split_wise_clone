@@ -31,25 +31,62 @@ export const createNewGroup = async (name, creatorId) => {
     }
 };
 
-export const createNewGroupMmebersTransaction = async (contactIds, groupId) => {
-    const db = await Connection.getConnection();
-    try { 
-        console.log("Start TXN")
-        await db.execAsync("BEGIN");
-         
-        const userIds = await registerUsersUnOfficial(contactIds)
-       
-        if (userIds.length > 0){
-            await createGroupMembers(userIds,groupId , db )
-        }
-        console.log("Commit TXN")
-        await db.execAsync("COMMIT");
+export const createNewGroupMmebersTransaction = async (
+  contacts,
+  groupId
+) => {
+  const db = await Connection.getConnection();
 
-       
-    } catch (error) {
-        if (db) {
-            await db.execAsync("ROLLBACK");
-        }
-        throw error;
+  try {
+    console.log("Start TXN");
+
+    await db.execAsync("BEGIN");
+
+    // Register contacts as users
+    const userIds = [];
+
+    for (const contact of contacts) {
+      const name = contact.name;
+      const email =
+        contact.email ?? `${contact.id}@local.app`; // fallback
+
+      // Insert user safely
+      const result = await db.runAsync(
+        `INSERT OR IGNORE INTO users (name, email)
+         VALUES (?, ?)`,
+        [name, email]
+      );
+
+      // Fetch user id (existing or new)
+      const user = await db.getFirstAsync(
+        `SELECT id FROM users WHERE email = ?`,
+        [email]
+      );
+
+      if (user?.id) {
+        userIds.push(user.id);
+      }
     }
+
+    // Add group members
+    if (userIds.length) {
+      for (const uid of userIds) {
+        await db.runAsync(
+          `INSERT OR IGNORE INTO group_members
+           (group_id, user_id)
+           VALUES (?, ?)`,
+          [groupId, uid]
+        );
+      }
+    }
+
+    console.log("Commit TXN");
+    await db.execAsync("COMMIT");
+  } catch (error) {
+    console.log("TXN ERROR → rollback", error);
+
+    await db.execAsync("ROLLBACK");
+
+    throw error;
+  }
 };

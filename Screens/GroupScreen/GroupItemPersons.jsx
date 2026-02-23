@@ -20,7 +20,6 @@ useLayoutEffect(()=>{
     <View>
       <Button style={{width:'300', marginVertical:'10',marginHorizontal:'auto' }} onPress={handleAddNewMembers} mode='contained-tonal'>Add New Member</Button>
       
-      
     </View>
   )
 } 

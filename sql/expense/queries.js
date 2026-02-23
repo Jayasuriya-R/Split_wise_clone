@@ -11,3 +11,17 @@ INNER JOIN users u
   ON u.id = e.paid_by 
 WHERE e.group_id = ?
 `
+export const GET_EXPENSE_SPLITS_OF_A_EXPENSE = `
+SELECT 
+  es.*, 
+  u.name, 
+  p.status, 
+  p.amount
+FROM expense_splits es
+INNER JOIN users u 
+  ON u.id = es.user_id 
+INNER JOIN payments p 
+  ON p.payer_id = es.user_id
+WHERE es.expense_id = ? 
+  AND p.expense_id = ?;
+`;
