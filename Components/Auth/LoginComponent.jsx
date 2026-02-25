@@ -28,10 +28,12 @@ const LoginComponent = () => {
       <Text style={styles.textInfo}>Welcome Back,Login</Text>
       <TextInput
         style={styles.input}
-        label="userId"
+        label="Email / Phone / ID"
         value={userId}
         onChangeText={text => setUserId(text)}
         mode='flat'
+        keyboardType="email-address"
+        autoCapitalize="none"
       />
       <TextInput
         secureTextEntry={showPassword}

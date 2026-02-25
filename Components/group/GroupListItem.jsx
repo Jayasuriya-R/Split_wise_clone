@@ -13,14 +13,16 @@ const GroupListItem = ({groups}) => {
      nav.navigate('GroupItem',{groups})
     }
   return (
-    <TouchableOpacity style={styles.conatiner} onPress={navigateToGroupItem}>
-    <View style={styles.itemContainer}>
+    <TouchableOpacity style={styles.container} onPress={navigateToGroupItem}>
+      <View style={styles.itemContainer}>
         <View >
-         <Text style={styles.text}>{groups.group_name}</Text>
-         <Text style={styles.subText}>{ new Date(groups.created_at).toLocaleDateString()}</Text>
+          <Text style={styles.text}>{groups.group_name}</Text>
+          <Text style={styles.subText}>{ new Date(groups.created_at).toLocaleDateString()}</Text>
         </View>
         <View style={styles.iconContainer}>
-         <Chip style={{ backgroundColor: 'white' }} icon="account">4</Chip>
+          <Chip style={{ backgroundColor: 'white' }} icon="account">
+            {groups.member_count ?? 0}
+          </Chip>
         </View>
       </View>
     </TouchableOpacity>
@@ -30,15 +32,15 @@ const GroupListItem = ({groups}) => {
 export default GroupListItem
 
 const styles = StyleSheet.create({
-    conatiner:{
+    container:{
         marginVertical:10,
         padding:7,
         borderWidth:1,
         borderRadius:10,
         width: Dimensions.get("window").width - 70,
-        margin:'auto',
+        alignSelf: 'center',
         backgroundColor:'#29293d',
-        },
+    },
     text:{
         color:'white',
         fontSize:20,

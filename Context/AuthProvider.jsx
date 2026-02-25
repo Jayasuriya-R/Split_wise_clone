@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { isValidString } from "../constants/helper";
-import { CreateUser, GetUser } from "../sql/auth/user";
+import { CreateUser, GetUser, GetUserByIdentifier } from "../sql/auth/user";
 import { Create_session, Delete_Session, Get_Session } from "../sql/auth/session";
 
 const AuthContext = createContext({
@@ -36,18 +36,30 @@ const AuthProvider = ({ children }) => {
         }
     }
 
-    const login = async (id, password) => {
-        if (isValidString([password])) {
-            const result = await GetUser(id)
-            console.log("login", result)
-            if (!result.password === password) {
-                alert("Invalid credentials")
+    const login = async (identifier, password) => {
+        // identifier can be user id, email or phone
+        if (!isValidString([identifier, password])) {
+            alert('Please enter both credentials');
+            return;
+        }
+
+        try {
+            const result = await GetUserByIdentifier(identifier);
+            console.log("login lookup result", result);
+
+            if (!result || result.password !== password) {
+                alert("Invalid credentials");
+                return;
             }
-            await Delete_Session()
-            await Create_session(result?.id)
-            setIsLoggedIn(true)
-            console.log("result", result)
-            setUser(result)
+
+            // clear any existing session and create a new one
+            await Delete_Session();
+            await Create_session(result.id);
+            setIsLoggedIn(true);
+            setUser(result);
+        } catch (error) {
+            console.log("Login error", error);
+            alert("An error occurred during login");
         }
     }
     const signup = async (name, email, phone, password) => {

@@ -2,33 +2,42 @@ import { registerUsersUnOfficial } from "../auth/user/create";
 import Connection from "../connections"
 import { createGroupMembers } from "../group-member/create"
 import { CREATE_NEW_GROUP_QUERY } from "./queries"
+import { addNewActivity } from "../activity/add" // log user activities
 
 export const createNewGroup = async (name, creatorId) => {
-    let db;
+  let db;
 
-    try {
-        db = await Connection.getConnection();
+  try {
+    db = await Connection.getConnection();
 
-        await db.execAsync("BEGIN");
+    await db.execAsync("BEGIN");
 
-        const group = await db.runAsync(
-            CREATE_NEW_GROUP_QUERY,
-            [name, creatorId]
-        );
+    const group = await db.runAsync(
+      CREATE_NEW_GROUP_QUERY,
+      [name, creatorId]
+    );
 
-        const groupId = group.lastInsertRowId;
+    const groupId = group.lastInsertRowId;
 
-        await createGroupMembers([Number(creatorId)], Number(groupId));
+    // record creator as member
+    await createGroupMembers(
+      [Number(creatorId)],
+      Number(groupId),
+      db
+    );
 
-        await db.execAsync("COMMIT");
+    // log activity for creator
+    await addNewActivity(db, `Created group '${name}'`, Number(creatorId));
 
-        return groupId;
-    } catch (error) {
-        if (db) {
-            await db.execAsync("ROLLBACK");
-        }
-        throw error;
+    await db.execAsync("COMMIT");
+
+    return groupId;
+  } catch (error) {
+    if (db) {
+      await db.execAsync("ROLLBACK");
     }
+    throw error;
+  }
 };
 
 export const createNewGroupMmebersTransaction = async (
@@ -77,6 +86,8 @@ export const createNewGroupMmebersTransaction = async (
            VALUES (?, ?)`,
           [groupId, uid]
         );
+        // log activity for the new member
+        await addNewActivity(db, `Added to group #${groupId}`, uid);
       }
     }
 

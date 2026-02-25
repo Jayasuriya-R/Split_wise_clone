@@ -3,11 +3,11 @@ import React from "react";
 import GroupAppBar from "./GroupAppBar";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
-const GroupLayout = ({ children }) => {
+const GroupLayout = ({ children, onSearch }) => {
   return (
     <SafeAreaProvider style={styles.safeArea}>
       <View style={styles.container}>
-        <GroupAppBar />
+        <GroupAppBar onSearch={onSearch} />
 
         <Text style={styles.text}>All Groups</Text>
 

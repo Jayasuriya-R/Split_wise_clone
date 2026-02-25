@@ -20,3 +20,15 @@ export const GetUser = async (id) => {
         console.log(error)
     }
 }
+
+// helper to lookup by multiple identifiers (id / email / phone)
+export const GetUserByIdentifier = async (identifier) => {
+    try {
+        const db = await Connection.getConnection();
+        // supply the same value for all three placeholders
+        const result = await db.getFirstAsync(GET_USER_BY_IDENTIFIER, [identifier, identifier, identifier]);
+        return result;
+    } catch (error) {
+        console.log(error)
+    }
+}

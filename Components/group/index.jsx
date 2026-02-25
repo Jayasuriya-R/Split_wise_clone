@@ -1,12 +1,26 @@
-import { StyleSheet, Text, View } from 'react-native'
-import React from 'react'
+import { StyleSheet, View } from 'react-native'
+import React, { useState } from 'react'
 import GroupLayout from './GroupLayout'
 import GroupList from './GroupList'
 
 const GroupContent = () => {
+    const [searchQuery, setSearchQuery] = useState('')
+    const [showSearch, setShowSearch] = useState(false)
+
+    const handleSearchPress = () => {
+      setShowSearch(prev => {
+        if (prev) setSearchQuery('')
+        return !prev
+      })
+    }
+
     return (
-        <GroupLayout>
-            <GroupList />
+        <GroupLayout onSearch={handleSearchPress}>
+            <GroupList
+              searchQuery={searchQuery}
+              setSearchQuery={setSearchQuery}
+              showSearch={showSearch}
+            />
         </GroupLayout>
     )
 }

@@ -9,7 +9,6 @@ import { createNewGroup } from '../../sql/group/create'
 const AddGroups = () => {
   const navigation = useNavigation()
   const [groupName, setGroupName] = useState("")
-  const [groups, setGroups] = useState([])
  const { user } = useAuth();
 
 const addNewGroup = async () => {
@@ -17,7 +16,6 @@ const addNewGroup = async () => {
     alert("Please enter a group name");
     return;
   }
- console.log("user:",user)
   if (!user?.id) {
     alert("User not logged in");
     return;
@@ -26,6 +24,7 @@ const addNewGroup = async () => {
   try {
     const groupId = await createNewGroup(groupName, Number(user.id));
     alert(`Group created successfully! \nGroup ID: ${groupId}`);
+    navigation.goBack();
   } catch (error) {
     console.error("Error occurred while creating group:", error);
     alert("Failed to create group. Please try again.");
@@ -51,16 +50,6 @@ const addNewGroup = async () => {
             style={styles.input}
             onChangeText={setGroupName}
           />
-        </View>
-        <View>
-          {groups.map((x, i) => {
-            return (
-              <Chip key={i} icon="information">
-                {x}
-              </Chip>
-            )
-          })}
-
         </View>
 
       </View>

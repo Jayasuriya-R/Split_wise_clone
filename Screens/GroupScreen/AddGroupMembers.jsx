@@ -14,14 +14,17 @@ const AddGroupMembers = () => {
 
   const addNewMembers = async ()=>{
     if(selectedContacts.length === 0){
+      alert('Please select contacts');
       return
     }
     try {
       console.log("selectedContacts",selectedContacts)
       await createNewGroupMmebersTransaction(selectedContacts,selectedGroup.id);
-      alert("Sucess")
+      alert("Success")
+      nav.goBack()
     } catch (error) {
       console.log("error",error)
+      alert('Failed to add members')
     }
   }
   return (
@@ -52,9 +55,8 @@ const styles = StyleSheet.create({
   },
   container: {
     width: Dimensions.get('window').width - 50,
-    marginHorizontal: 'auto',
+    alignSelf: 'center',
     padding: 20,
     height: 250
-
   }
 })

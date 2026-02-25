@@ -1,5 +1,5 @@
 import { Dimensions, StyleSheet, Text, View } from 'react-native'
-import React, { useActionState, useLayoutEffect, useState } from 'react'
+import React, { useLayoutEffect, useState } from 'react'
 import { Appbar, Button, Chip, PaperProvider, TextInput } from 'react-native-paper'
 import { useNavigation } from '@react-navigation/native'
 import SplitByPercentage from '../../Components/expense/SplitByPercentage'
@@ -31,19 +31,36 @@ const GroupAddExpense = () => {
         setModalVisible(false)
     }
     const handleCreateSplit = async() => {
+       if (!expenseDesc.trim()) {
+         alert('Please enter a description');
+         return;
+       }
+       if (!expenseAmt || isNaN(expenseAmt) || Number(expenseAmt) <= 0) {
+         alert('Please enter a valid amount');
+         return;
+       }
+       if (!expenseData || Object.keys(expenseData).length === 0) {
+         alert('Please select split details');
+         return;
+       }
        try {
-        console.log("groupId :;",groupId)
         await addNewExpense(expenseData,+expenseAmt,expenseDesc,user?.id,+groupId)
         alert("Success")
+        nav.goBack()
        } catch (error) {
-        console.log("Failed")
+        console.log("Failed", error)
+        alert('Failed to create expense')
        }
     }
     const splitEqually = () => {
         setSplitType(SplitType.equally)
+        if (!users || users.length === 0) {
+            setExpenseData({})
+            return
+        }
         const equalShare = 100 / users.length
         const expData = {}
-        users?.forEach((user) => expData[user.id] = equalShare)
+        users.forEach((user) => expData[user.id] = equalShare)
         setExpenseData(expData)
     }
 

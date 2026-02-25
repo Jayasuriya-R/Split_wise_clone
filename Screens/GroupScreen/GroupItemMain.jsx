@@ -12,7 +12,13 @@ const GroupItemMain = () => {
   const nav = useNavigation()
    
   useLayoutEffect(() => {
-    getExpensesOfGroup(selectedGroup?.id)
+    if (!selectedGroup?.id) {
+      setExpenses([])
+      setLoading(false)
+      return
+    }
+    setLoading(true)
+    getExpensesOfGroup(selectedGroup.id)
       .then((data) => {
         setExpenses(data)
         setLoading(false)
@@ -21,7 +27,7 @@ const GroupItemMain = () => {
         console.log(err)
         setLoading(false)
       })
-  }, [])
+  }, [selectedGroup?.id])
 
   const handleExpenseItemClick = (expenseItem)=>{
     nav.navigate("GroupExpenseItem",{expenseItem})

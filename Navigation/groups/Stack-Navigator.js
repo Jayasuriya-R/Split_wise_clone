@@ -1,8 +1,6 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import AllGroups from "../../Screens/GroupScreen/AllGroups";
 import AddGroups from "../../Screens/GroupScreen/AddGroups";
-import GroupItem from "../../Screens/GroupScreen/GroupItem";
-import GroupMembers from "../../Screens/GroupScreen/AddGroupMembers";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 import GroupItemPersons from "../../Screens/GroupScreen/GroupItemPersons";
 import GroupItemMain from "../../Screens/GroupScreen/GroupItemMain";

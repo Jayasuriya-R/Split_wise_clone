@@ -49,6 +49,7 @@ const SelectContact = ({ onSelectedContacts = () => {} }) => {
         fields: [
           Contacts.Fields.Name,
           Contacts.Fields.PhoneNumbers,
+          Contacts.Fields.Emails,
         ],
       });
 
@@ -58,6 +59,8 @@ const SelectContact = ({ onSelectedContacts = () => {} }) => {
         .map(c => ({
           id: c.id,
           name: c.name,
+          phone: c.phoneNumbers?.[0]?.number || '',
+          email: c.emails?.[0]?.email || '',
         }));
 
       setContacts(formattedContacts);

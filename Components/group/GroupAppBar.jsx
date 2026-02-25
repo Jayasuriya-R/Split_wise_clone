@@ -3,7 +3,7 @@ import React from 'react'
 import { Appbar } from 'react-native-paper'
 import { useNavigation } from '@react-navigation/native'
 
-const GroupAppBar = () => {
+const GroupAppBar = ({ onSearch }) => {
 
   const nav = useNavigation()
 
@@ -14,7 +14,7 @@ const GroupAppBar = () => {
     <View>
       <Appbar.Header style={styles.appBar}>
         <Appbar.Content title="Group" />
-        <Appbar.Action icon="magnify" onPress={() => { alert('search')}} />
+        <Appbar.Action icon="magnify" onPress={onSearch} />
         <Appbar.Action icon="account-multiple-plus-outline" onPress={handleNavigateToAddgroup} />
       </Appbar.Header>
     </View>
